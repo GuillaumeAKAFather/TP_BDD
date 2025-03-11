@@ -13,11 +13,11 @@ public class TB_BDD{
         preGameLoop.MainLoop();
 
 
-        MongoClient client = new MongoClient(connectionString);
-        IMongoDatabase db = client.GetDatabase(databaseName);
-        var collection = db.GetCollection<Player>(collectionName);
+        // MongoClient client = new MongoClient(connectionString);
+        // IMongoDatabase db = client.GetDatabase(databaseName);
+        // var collection = db.GetCollection<Player>(collectionName);
 
-        Player person = new Player{FirstName = "Naruto", LastName = "Uzumaki"};
+        // Player person = new Player{FirstName = "Naruto", LastName = "Uzumaki"};
         //await collection.InsertOneAsync(person)
 
     }

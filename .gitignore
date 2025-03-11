@@ -1,0 +1,43 @@
+# .NET Core / .NET 5+ build output
+bin/
+obj/
+
+# User-specific files
+.vs/
+.vscode/
+.idea/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows Installer files (for Windows Store apps)
+appx/
+appxsym/
+
+# User-specific files for Rider
+.idea/
+
+# Windows image file directories
+Thumbs.db
+ehthumbs.db
+
+# JetBrains Rider
+.idea/
+
+# NPM / Node.js dependencies
+node_modules/
+
+# JetBrains Rider
+.idea/
+
+# ASP.NET Scaffolding
+Scaffolding/
+
+# ASP.NET temporary files
+wwwroot/
+
+# Configuration file for Visual Studio Code workspace
+.vscode/
