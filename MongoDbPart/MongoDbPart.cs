@@ -2,6 +2,9 @@ using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using System.Numerics;
+using Org.BouncyCastle.Math.EC.Rfc7748;
+using System.Xaml.Permissions;
+using System.Threading.Tasks;
 public class MongoDbPart{
 
     private MongoClient client;
@@ -34,10 +37,11 @@ public class MongoDbPart{
 
     public void RegisterPlayerMovement(int playerID, int gameId, Vector3 newPosition){
         IMongoCollection<PlayerMovement> movementCollection = db.GetCollection<PlayerMovement>(deplacement_joueur);
-        movementCollection.InsertOneAsync(new PlayerMovement{
+        movementCollection.InsertOne(new PlayerMovement{
             playerId = playerID, 
             moveTo = newPosition, 
-            gameId = gameId
+            gameId = gameId,
+            timeStamp = DateTime.Now,
         });
     }
 
@@ -59,6 +63,17 @@ public class MongoDbPart{
         return playerMovementList;
     }
 
+    public Vector3 GetPlayerPositionByGameId(int playerId, int gameId){
+        IMongoCollection<PlayerMovement> movementCollection = db.GetCollection<PlayerMovement>(deplacement_joueur);
+        SortDefinition<PlayerMovement> sort = Builders<PlayerMovement>.Sort.Descending(x => x.timeStamp);
+        PlayerMovement playerMovement = movementCollection.Find<PlayerMovement>(x => x.gameId == gameId && x.playerId == playerId).Sort(sort).FirstOrDefault();
+        if(playerMovement == null){
+            Console.WriteLine("ABON ? ");
+            return new Vector3(0,0,0);
+        }
+        return playerMovement.moveTo;
+    }
+
     public void RegisterPlayerShoot(int playerID, int gameId, Vector3 shootDirection){
         IMongoCollection<PlayerShootData> playerShootCollection = db.GetCollection<PlayerShootData>(tirs_joueurs);
         playerShootCollection.InsertOneAsync(new PlayerShootData{
@@ -75,6 +90,7 @@ public class MongoDbPart{
         public int playerId{get;set;}
         public int gameId{get;set;}
         public Vector3 moveTo{get;set;}
+        public DateTime timeStamp{get;set;}
     }
 
     public class PlayerShootData{

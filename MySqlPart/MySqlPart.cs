@@ -129,43 +129,37 @@ public class MySqlPart{
             }
         }
 
-        if (gameSize < 1){
+        if (gameSize == -1){
             return;
         }
 
         //Generate line enemy
         Random rand = new Random();
-        List<Vector3> shipPositions = new List<Vector3>();
-
         for (int i = 0; i < 10; i++)
         {
-            int shipSize = rand.Next(1, gameSize);
-            Vector3 shipPosition;
-
-            // Ensure the new ship position does not overlap with existing ones
-            bool positionValid;
-            do
-            {
-                positionValid = true;
-                shipPosition = new Vector3(rand.Next(0, gameSize - shipSize), rand.Next(0, gameSize - shipSize), rand.Next(0, gameSize - shipSize));
-
-                foreach (var existingPosition in shipPositions)
-                {
-                    if (Vector3.Distance(shipPosition, existingPosition) < shipSize)
-                    {
-                        positionValid = false;
-                        break;
-                    }
-                }
-            } while (!positionValid);
-
-            shipPositions.Add(shipPosition);
+            int shipSize = rand.Next(1,gameSize);
+            Vector3 shipPosition= new Vector3( rand.Next(0,gameSize - shipSize),rand.Next(0,gameSize - shipSize),rand.Next(0,gameSize - shipSize));
             string jsonShipPosition = JsonConvert.SerializeObject(shipPosition);
+            //Console.WriteLine("Create ship with size : " + shipSize +" at position :" + shipPosition);
             string addShipSql = $"insert into `USRS6N_1`.`Gr6_Vaisseau` ( `partieId`, `typeVaisseau`, `taille`, `position`) VALUES ('{partieID}', 'segment', '{shipSize}', '{jsonShipPosition}')";
             ExecuteSql(addShipSql);
         }
+
     }
 
+    public bool IsOutsideGameBound(int gameId, Vector3 position){
+        string sql = $"select dimensionCube from Gr6_Partie where partieId={gameId}";
+        int gameSize = -1;
+        using (MySqlDataReader result = GetSqlResults(sql)){
+            if(result.Read()){
+                gameSize= result.GetInt32(0);
+            }
+        }
+        
+        return position.X < 0 || position.X >= gameSize ||
+        position.Y < 0 || position.Y >= gameSize ||
+        position.Z < 0 || position.Z >= gameSize;
+    }
 
     private MySqlDataReader GetSqlResults(string sql){
         MySqlCommand command = new MySqlCommand(sql, connection);
@@ -177,22 +171,23 @@ public class MySqlPart{
         command.ExecuteNonQuery();
     }
 
-    public void JoinGame(int joueurID, int partieID){
+    public bool JoinGame(int joueurID, int partieID){
 
         //Check if game exists and is not finished
         Console.WriteLine("Check party available");
         string sql = $"select etat from Gr6_Partie where partieId ={partieID}";
         using (MySqlDataReader result = GetSqlResults(sql)){
             if(result.Read()){
-                Console.WriteLine("Party existes ");
+                
             }else{
                 // Handle later, party does not exist or is finished
+                return false;
             }
         }
 
         //VictoryField NANI ?
         string joinSessionSql = $"INSERT INTO `USRS6N_1`.`Gr6_Session` (`partieId`, `joueurId`) VALUES ('{partieID}', '{joueurID}')";
-        Console.WriteLine(joinSessionSql);
         ExecuteSql(joinSessionSql);
+        return true;
     }
 }
