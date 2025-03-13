@@ -1,7 +1,7 @@
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
+using System.Configuration;
+using System.Numerics;
 using MySql.Data.MySqlClient;
-
+using Newtonsoft.Json;
 public class MySqlPart{
 
     MySqlConnection connection;
@@ -103,16 +103,69 @@ public class MySqlPart{
     }
 
     public void CreateGame(){
-        string sql = "insert into Gr6_Partie (dimensionCube, duree, etat, jeuId) values (3,60,'en cours',3)";
+        string sql = "insert into Gr6_Partie (dimensionCube, duree, etat, jeuId) values (5,60,'en cours',3); SELECT LAST_INSERT_ID()";
+        int generatedPrimaryKey = -1;
         using (MySqlDataReader result = GetSqlResults(sql)){
-            Console.WriteLine("Game created");
+            //Game created
+            if(result.Read()){
+                generatedPrimaryKey = result.GetInt32(0);
+                Console.WriteLine("Key of created game : " + generatedPrimaryKey);
+            }
         }
-        
+
+        GenerateEnemyShips(generatedPrimaryKey);
+
+        Console.WriteLine("Game created !");
+
     }
 
-    public void JoinGame(int gameIdToJoin){
-        
+    private void GenerateEnemyShips(int partieID){
+        //Get game size;
+        string sql = $"select dimensionCube from Gr6_Partie where partieId={partieID}";
+        int gameSize = -1;
+        using (MySqlDataReader result = GetSqlResults(sql)){
+            if(result.Read()){
+                gameSize= result.GetInt32(0);
+            }
+        }
+
+        if (gameSize < 1){
+            return;
+        }
+
+        //Generate line enemy
+        Random rand = new Random();
+        List<Vector3> shipPositions = new List<Vector3>();
+
+        for (int i = 0; i < 10; i++)
+        {
+            int shipSize = rand.Next(1, gameSize);
+            Vector3 shipPosition;
+
+            // Ensure the new ship position does not overlap with existing ones
+            bool positionValid;
+            do
+            {
+                positionValid = true;
+                shipPosition = new Vector3(rand.Next(0, gameSize - shipSize), rand.Next(0, gameSize - shipSize), rand.Next(0, gameSize - shipSize));
+
+                foreach (var existingPosition in shipPositions)
+                {
+                    if (Vector3.Distance(shipPosition, existingPosition) < shipSize)
+                    {
+                        positionValid = false;
+                        break;
+                    }
+                }
+            } while (!positionValid);
+
+            shipPositions.Add(shipPosition);
+            string jsonShipPosition = JsonConvert.SerializeObject(shipPosition);
+            string addShipSql = $"insert into `USRS6N_1`.`Gr6_Vaisseau` ( `partieId`, `typeVaisseau`, `taille`, `position`) VALUES ('{partieID}', 'segment', '{shipSize}', '{jsonShipPosition}')";
+            ExecuteSql(addShipSql);
+        }
     }
+
 
     private MySqlDataReader GetSqlResults(string sql){
         MySqlCommand command = new MySqlCommand(sql, connection);
@@ -121,8 +174,25 @@ public class MySqlPart{
 
     private void ExecuteSql(string sql){
         MySqlCommand command = new MySqlCommand(sql, connection);
-        command.ExecuteReader();
+        command.ExecuteNonQuery();
     }
 
+    public void JoinGame(int joueurID, int partieID){
 
+        //Check if game exists and is not finished
+        Console.WriteLine("Check party available");
+        string sql = $"select etat from Gr6_Partie where partieId ={partieID}";
+        using (MySqlDataReader result = GetSqlResults(sql)){
+            if(result.Read()){
+                Console.WriteLine("Party existes ");
+            }else{
+                // Handle later, party does not exist or is finished
+            }
+        }
+
+        //VictoryField NANI ?
+        string joinSessionSql = $"INSERT INTO `USRS6N_1`.`Gr6_Session` (`partieId`, `joueurId`) VALUES ('{partieID}', '{joueurID}')";
+        Console.WriteLine(joinSessionSql);
+        ExecuteSql(joinSessionSql);
+    }
 }

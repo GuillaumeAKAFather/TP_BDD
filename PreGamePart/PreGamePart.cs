@@ -8,23 +8,13 @@ public class PreGameLoop{
     private int actualPlayerID;
 
     public void MainLoop(){
-        Console.WriteLine("Connecting to server ...");
-        sqlPart = new MySqlPart();
-        Console.WriteLine("Connection done !");
+        // Console.WriteLine("Connecting to server ...");
+        // sqlPart = new MySqlPart();
+        // Console.WriteLine("Connection done !");
 
-        Welcome();
+        // Welcome();
 
-        // Console.ForegroundColor = ConsoleColor.Yellow;
-        // Console.WriteLine("------------- Bienvenue dans le jeu -------------");
-        // Console.ForegroundColor = ConsoleColor.White;
-        // Console.WriteLine("1 - Se connecter");
-        // Console.WriteLine("2 - S'inscrire");
-
-        // var result = int.Parse(Console.ReadLine());
-
-        // if(result == 1){
-        //     sqlPart.HandleSubscription();
-        // }
+        new MongoDbPart();
 
 
     }   
@@ -65,6 +55,7 @@ public class PreGameLoop{
             bool goodPasswordEntered = sqlPart.CheckPassword(Console.ReadLine(), pseudoID);
             if(goodPasswordEntered){
                 Console.WriteLine("Connected ! ");
+                actualPlayerID = pseudoID;
                 SelectGameState();
 
             }else{
@@ -98,16 +89,17 @@ public class PreGameLoop{
             SelectGameState();
             break;
             case 2:// Join game
-
+            int gameIdChoosed = -1;
             while(true){
-            Console.WriteLine("Enter the game id you want to join : ");
-            string input = Console.ReadLine();
-            if(int.TryParse(input, out int gameIdShoo)){
-                break;
+                Console.WriteLine("Enter the game id you want to join : ");
+                string input = Console.ReadLine();
+                if(int.TryParse(input, out gameIdChoosed)){
+                    break;
+                }
             }
-
             
-        }
+            sqlPart.JoinGame(actualPlayerID, gameIdChoosed);
+        
             break;
             case 3 : // Print joinable game
             List<int> joinableListIds = sqlPart.JoinablePartieList();

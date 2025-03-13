@@ -91,3 +91,4 @@ C:\Users\User\Desktop\BattleShip3D\TP_BDD\obj\Debug\net8.0\refint\TB_MongoDB.dll
 C:\Users\User\Desktop\BattleShip3D\TP_BDD\obj\Debug\net8.0\TB_MongoDB.pdb
 C:\Users\User\Desktop\BattleShip3D\TP_BDD\obj\Debug\net8.0\TB_MongoDB.genruntimeconfig.cache
 C:\Users\User\Desktop\BattleShip3D\TP_BDD\obj\Debug\net8.0\ref\TB_MongoDB.dll
+C:\Users\User\Desktop\BattleShip3D\TP_BDD\bin\Debug\net8.0\Newtonsoft.Json.dll
