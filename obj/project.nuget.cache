@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "WEMYuI71Knc=",
+  "dgSpecHash": "LfFvlEHVYkM=",
   "success": true,
-  "projectFilePath": "C:\\Users\\User\\Documents\\TB_MongoDB\\TB_MongoDB.csproj",
+  "projectFilePath": "C:\\Users\\User\\Desktop\\BattleShip3D\\TP_BDD\\TB_MongoDB.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\User\\.nuget\\packages\\bouncycastle.cryptography\\2.3.1\\bouncycastle.cryptography.2.3.1.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\dnsclient\\1.6.1\\dnsclient.1.6.1.nupkg.sha512",

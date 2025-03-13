@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Documents\\TB_MongoDB\\TB_MongoDB.csproj": {}
+    "C:\\Users\\User\\Desktop\\BattleShip3D\\TP_BDD\\TB_MongoDB.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Documents\\TB_MongoDB\\TB_MongoDB.csproj": {
+    "C:\\Users\\User\\Desktop\\BattleShip3D\\TP_BDD\\TB_MongoDB.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Documents\\TB_MongoDB\\TB_MongoDB.csproj",
+        "projectUniqueName": "C:\\Users\\User\\Desktop\\BattleShip3D\\TP_BDD\\TB_MongoDB.csproj",
         "projectName": "TB_MongoDB",
-        "projectPath": "C:\\Users\\User\\Documents\\TB_MongoDB\\TB_MongoDB.csproj",
+        "projectPath": "C:\\Users\\User\\Desktop\\BattleShip3D\\TP_BDD\\TB_MongoDB.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Documents\\TB_MongoDB\\obj\\",
+        "outputPath": "C:\\Users\\User\\Desktop\\BattleShip3D\\TP_BDD\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"
