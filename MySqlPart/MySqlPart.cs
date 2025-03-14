@@ -1,4 +1,5 @@
 using System.Configuration;
+using System.Data.SqlTypes;
 using System.Numerics;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
@@ -147,6 +148,31 @@ public class MySqlPart{
 
     }
 
+    public struct EnemyShipDataStructure{
+        public int partieID;
+        public int taille;
+        public Vector3 position;
+        public string typeVaisseau;
+    }
+    public Dictionary<int, EnemyShipDataStructure> GetEnemyShipDataByGameId(int partieID){
+        string sql = $"select * from Gr6_Vaisseau v where v.partieId='{partieID} and not exists(select 1 from Gr6_DestroyedPart d where d.data = v.data)'";
+        Dictionary<int, EnemyShipDataStructure> resultDataStructure = new Dictionary<int, EnemyShipDataStructure>();
+
+        using (MySqlDataReader result = GetSqlResults(sql)){
+            while(result.Read()){
+                resultDataStructure[ (int)result["vaisseauId"]] = new EnemyShipDataStructure{
+                    partieID = (int)result["partieId"],
+                    taille = (int)result["taille"],
+                    position = JsonConvert.DeserializeObject<Vector3>((string)result["position"]),
+                    typeVaisseau = (string)result["typeVaisseau"],
+                };
+            }
+        }
+
+        return resultDataStructure;
+
+    }
+
     public bool IsOutsideGameBound(int gameId, Vector3 position){
         string sql = $"select dimensionCube from Gr6_Partie where partieId={gameId}";
         int gameSize = -1;
@@ -189,5 +215,28 @@ public class MySqlPart{
         string joinSessionSql = $"INSERT INTO `USRS6N_1`.`Gr6_Session` (`partieId`, `joueurId`) VALUES ('{partieID}', '{joueurID}')";
         ExecuteSql(joinSessionSql);
         return true;
+    }
+
+    public void AddPlayerPoint(int gameId , int playerId){
+        string sql = $"update Gr6_Session set score = score + 1 WHERE partieId = '{gameId}' AND joueurId = '{playerId}'";
+        ExecuteSql(sql);
+    }
+
+    public void AddDestroyedPart(int gameId, Vector3 destroyedPosition ){
+        string json = JsonConvert.SerializeObject(destroyedPosition);
+        string destroyPartSql = $"insert into `USRS6N_1`.`Gr6_DestroyedPart` (`partDestroyed`, `gameId`) VALUES ('{json}', '{gameId}')";
+        ExecuteSql(destroyPartSql);
+    }
+    public List<Vector3> GetUnavailablePoint(int gameId){
+        List<Vector3> unavailablePoint = new List<Vector3>();
+        string sql = $"select * form Gr6_DestroyedPart where gameId='{gameId}'";
+
+        using (MySqlDataReader result = GetSqlResults(sql)){
+            while(result.Read()){
+                unavailablePoint.Add( JsonConvert.DeserializeObject<Vector3>((string)result["partDestroyed"]));
+            }
+        }
+
+        return unavailablePoint;
     }
 }
